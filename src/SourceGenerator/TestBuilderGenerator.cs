@@ -8,12 +8,13 @@ using System.Text;
 namespace SourceGenerator
 {
     [Generator]
-    public class HelloWorldGenerator : ISourceGenerator
+    public class TestBuilderGenerator : ISourceGenerator
     {
         public void Execute(GeneratorExecutionContext context)
         {
-            var members = 
-                context.Compilation.GlobalNamespace
+            var compilation = context.Compilation;
+            var members =
+                compilation.GlobalNamespace
                 .GetNamespaceMembers().First(q => q.Name == "SourceGeneratorTest")
                 .GetNamespaceMembers().First(q => q.Name == "Builders")
                 .GetTypeMembers()
@@ -25,7 +26,7 @@ namespace SourceGenerator
             {
                 // Finders
                 var srcName = member.MetadataName.Replace("Builder", "");
-                var srcType = context.Compilation.GetTypeByMetadataName("SourceGeneratorTest.Models." + srcName);
+                var srcType = compilation.GetTypeByMetadataName("SourceGeneratorTest.Models." + srcName);
                 var properties = srcType.GetMembers().Where(m => m.Kind.Equals(SymbolKind.Property));
 
                 // Customizations
@@ -33,9 +34,10 @@ namespace SourceGenerator
 
                 codeGen
                     .AppendLine("// Generated at " + DateTime.Now)
+                    .AppendLine("")
                     .AppendLine("using SourceGeneratorTest.Models;")
                     .AppendLine("using System.Runtime.InteropServices;")
-                    .AppendLine()
+                    .AppendLine("")
                     .AppendLine("namespace SourceGeneratorTest.Builders")
                     .AppendLine("{")
                     .AppendLine(Tab(1) + FullClassName(srcName))
