@@ -7,7 +7,7 @@ namespace SourceGeneratorTest
         [Fact]
         public void Test1()
         {
-            ModelDtoBuilder.CreateDefault().WithMyProperty1(1);
+            //ModelDtoBuilder.CreateDefault().WithMyProperty1(1);
         }
     }
 }

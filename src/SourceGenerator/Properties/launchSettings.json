@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Profile 1": {
+    "SourceGeneratorTest": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "..\\SourceGeneratorTest\\SourceGeneratorTest.csproj"
     }
