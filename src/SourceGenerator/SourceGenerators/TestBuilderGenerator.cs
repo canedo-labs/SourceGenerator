@@ -1,6 +1,8 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using SourceGenerator.Services;
+using SourceGenerator.Extensions;
+using SourceGenerator.Searches;
+using SourceGenerator.Structures;
 using System;
 using System.Linq;
 using System.Text;
@@ -12,18 +14,14 @@ namespace SourceGenerator.SourceGenerators
     {
         public void Execute(GeneratorExecutionContext context)
         {
-            var builderMembers = 
-                new NamespaceService(context, "SourceGeneratorTest.Builders")
-                .GetNamespaceMember()
-                .GetTypeMembers();
-            var typeNamespaceService = new NamespaceService(context, "SourceGenerator.Core");
+            var symbols = context.GetFinder<BuilderFinder>().GetDeclaredSymbols(context);
 
-
-            foreach (var builderMember in builderMembers)
+            foreach (var symbol in symbols)
             {
                 // Finders
-                var className = builderMember.MetadataName.Replace("Builder", "");
-                var classSymbol = typeNamespaceService.GetTypeByClassName(className);
+                var className = symbol.MetadataName.Replace("Builder", "");
+                var namespaceSymbol = context.GetSymbolByNamespaceName("SourceGenerator.Core");
+                var classSymbol = LazySearch.Execute(namespaceSymbol, className);
                 var classProperties = classSymbol.GetMembers().Where(m => m.Kind.Equals(SymbolKind.Property));
 
                 // Customizations
@@ -64,7 +62,10 @@ namespace SourceGenerator.SourceGenerators
             }
         }
 
-        public void Initialize(GeneratorInitializationContext context) { }
+        public void Initialize(GeneratorInitializationContext context) 
+        {
+            context.RegisterForSyntaxNotifications(() => new BuilderFinder());
+        }
 
         private string ClassName(string name) => name + "Builder";
 
