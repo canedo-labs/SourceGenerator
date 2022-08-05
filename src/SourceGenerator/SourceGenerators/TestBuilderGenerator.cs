@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using SourceGenerator.Extensions;
-using SourceGenerator.Searches;
+using SourceGenerator.Finders;
 using SourceGenerator.Structures;
 using System;
 using System.Linq;
@@ -21,7 +21,7 @@ namespace SourceGenerator.SourceGenerators
                 // Finders
                 var className = symbol.MetadataName.Replace("Builder", "");
                 var namespaceSymbol = context.GetSymbolByNamespaceName("SourceGenerator.Core");
-                var classSymbol = LazySearch.Execute(namespaceSymbol, className);
+                var classSymbol = LazyNamespaceFinder.Find(namespaceSymbol, className);
                 var classProperties = classSymbol.GetMembers().Where(m => m.Kind.Equals(SymbolKind.Property));
 
                 // Customizations

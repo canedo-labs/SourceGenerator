@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SourceGenerator.Searches
+namespace SourceGenerator.Finders
 {
-    public static class LazySearch
+    public static class LazyNamespaceFinder
     {
-        public static INamespaceOrTypeSymbol Execute(INamespaceSymbol namespaceSymbol, string name)
+        public static INamespaceOrTypeSymbol Find(INamespaceSymbol namespaceSymbol, string name)
         {
             var symbol = namespaceSymbol.GetMembers(name).FirstOrDefault();
 
@@ -26,7 +26,7 @@ namespace SourceGenerator.Searches
                     return nmSymbol;
                 }
 
-                var nmSymbolSearch = Execute(nm, name);
+                var nmSymbolSearch = Find(nm, name);
 
                 if (nmSymbolSearch != null)
                 {
